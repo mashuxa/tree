@@ -1,4 +1,5 @@
 import { FC } from "react";
+import Main from "src/components/Main/Main";
 import logo from "src/images/logo.svg";
 
 const App: FC = () => {
@@ -15,7 +16,7 @@ const App: FC = () => {
           Tree GitHub
         </a>
       </header>
-      <main className="flex-grow overflow-y-auto"></main>
+      <Main />
     </div>
   );
 };

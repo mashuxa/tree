@@ -6,7 +6,7 @@ const config = {
         primary: "#98C341",
         secondary: "#5F9039",
         warning: "#FF7738",
-        error: "#AB3D5C",
+        dangerous: "#AB3D5C",
       },
     },
   },
