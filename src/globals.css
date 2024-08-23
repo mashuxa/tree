@@ -1,0 +1,17 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+
+  .delay-150 {
+    animation-delay: 0.15s;
+  }
+
+  .delay-300 {
+    animation-delay: 0.3s;
+  }
+}
