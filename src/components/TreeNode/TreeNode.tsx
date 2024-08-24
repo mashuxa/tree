@@ -1,4 +1,4 @@
-import { FC, useState } from "react";
+import { FC, memo, useCallback, useState } from "react";
 import ActionMenu from "src/components/ActionMenu/ActionMenu";
 import { Action, Node, Tree } from "src/types";
 
@@ -18,14 +18,26 @@ const TreeNode: FC<TreeNodeProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
   const isSelected = selectedId === nodeData.id;
 
-  const onAdd = (): void => setAction(Action.add);
-  const onRename = (): void => setAction(Action.rename);
-  const onDelete = (): void => setAction(Action.delete);
+  const onAdd = useCallback(
+    (): void => setAction(Action.add),
+    //eslint-disable-next-line
+    [],
+  );
+  const onRename = useCallback(
+    (): void => setAction(Action.rename),
+    //eslint-disable-next-line
+    [],
+  );
+  const onDelete = useCallback(
+    (): void => setAction(Action.delete),
+    //eslint-disable-next-line
+    [],
+  );
 
-  const handleClick = (): void => {
+  const handleClick = useCallback((): void => {
     onClick(nodeData);
     setIsExpanded((prev) => !prev);
-  };
+  }, [nodeData, onClick]);
 
   return (
     <li>
@@ -45,7 +57,7 @@ const TreeNode: FC<TreeNodeProps> = ({
       {isExpanded && (
         <ul className="pl-4">
           {children.map((node) => (
-            <TreeNode
+            <MemoizedTreeNode
               key={node.id}
               {...node}
               selectedId={selectedId}
@@ -53,7 +65,7 @@ const TreeNode: FC<TreeNodeProps> = ({
               setAction={setAction}
             >
               {node.children}
-            </TreeNode>
+            </MemoizedTreeNode>
           ))}
         </ul>
       )}
@@ -61,4 +73,6 @@ const TreeNode: FC<TreeNodeProps> = ({
   );
 };
 
-export default TreeNode;
+const MemoizedTreeNode = memo(TreeNode);
+
+export default MemoizedTreeNode;

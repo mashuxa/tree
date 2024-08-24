@@ -1,4 +1,4 @@
-import { FC, FormEvent } from "react";
+import { FC, FormEvent, useCallback } from "react";
 import Button from "src/components/Button/Button";
 import { Action, Node } from "src/types";
 
@@ -15,15 +15,18 @@ const ActionModal: FC<ActionModalProps> = ({
   onSubmit,
   selectedNode,
 }) => {
-  const handleSubmit = (event: FormEvent<HTMLFormElement>): void => {
-    event.preventDefault();
+  const handleSubmit = useCallback(
+    (event: FormEvent<HTMLFormElement>): void => {
+      event.preventDefault();
 
-    const formData = new FormData(event.currentTarget);
-    const name = formData.get("name") as string;
+      const formData = new FormData(event.currentTarget);
+      const name = formData.get("name") as string;
 
-    onSubmit(name);
-  };
-  const handleDelete = (): void => onSubmit();
+      onSubmit(name);
+    },
+    [onSubmit],
+  );
+  const handleDelete = useCallback((): void => onSubmit(), [onSubmit]);
 
   return (
     <div className="fixed inset-0 bg-gray-700 bg-opacity-50 flex items-center justify-center z-50">

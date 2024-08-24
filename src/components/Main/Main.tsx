@@ -1,4 +1,4 @@
-import { FC, useEffect, useReducer, useState } from "react";
+import { FC, useCallback, useEffect, useReducer, useState } from "react";
 import { createNode, deleteNode, getTree, renameNode } from "src/api/api";
 import ActionModal from "src/components/ActionModal/ActionModal";
 import ErrorNotification from "src/components/ErrorNotification/ErrorNotification";
@@ -14,59 +14,70 @@ const Main: FC = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const setErrorMessage = (error: unknown): void => {
-    handleClose();
-    setError(error instanceof Error ? error.message : "Error");
-  };
-
-  const fetchTree = async (): Promise<void> => {
-    setLoading(true);
-
-    try {
-      const payload = await getTree();
-
-      dispatch({ type: Action.addAll, payload });
-    } catch (error) {
-      setErrorMessage(error);
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleClose = (): void => {
+  const handleClose = useCallback((): void => {
     setAction(null);
     setSelectedNode(null);
-  };
+  }, []);
 
-  const resetError = (): void => setError("");
+  const setErrorMessage = useCallback(
+    (error: unknown): void => {
+      handleClose();
+      setError(error instanceof Error ? error.message : "Error");
+    },
+    //eslint-disable-next-line
+    [],
+  );
 
-  const updateNodes = async (name?: string): Promise<void> => {
-    if (!selectedNode) {
-      return;
-    }
+  const fetchTree = useCallback(
+    async (): Promise<void> => {
+      setLoading(true);
 
-    const { id } = selectedNode;
+      try {
+        const payload = await getTree();
 
-    try {
-      if (action === Action.add && name) {
-        await createNode(id, name);
-        await fetchTree();
-      } else if (action === Action.rename && name) {
-        await renameNode(id, name);
-        dispatch({
-          type: Action.rename,
-          payload: { id, name },
-        });
-      } else if (action === Action.delete) {
-        await deleteNode(id);
-        dispatch({ type: Action.delete, payload: { id } });
+        dispatch({ type: Action.addAll, payload });
+      } catch (error) {
+        setErrorMessage(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    //eslint-disable-next-line
+    [],
+  );
+
+  const resetError = useCallback((): void => setError(""), []);
+
+  const updateNodes = useCallback(
+    async (name?: string): Promise<void> => {
+      if (!selectedNode) {
+        return;
       }
 
-      handleClose();
-    } catch (error) {
-      setErrorMessage(error);
-    }
-  };
+      const { id } = selectedNode;
+
+      try {
+        if (action === Action.add && name) {
+          await createNode(id, name);
+          await fetchTree();
+        } else if (action === Action.rename && name) {
+          await renameNode(id, name);
+          dispatch({
+            type: Action.rename,
+            payload: { id, name },
+          });
+        } else if (action === Action.delete) {
+          await deleteNode(id);
+          dispatch({ type: Action.delete, payload: { id } });
+        }
+
+        handleClose();
+      } catch (error) {
+        setErrorMessage(error);
+      }
+    },
+    [action, fetchTree, handleClose, selectedNode, setErrorMessage],
+  );
 
   useEffect(
     () => {

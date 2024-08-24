@@ -1,4 +1,4 @@
-import { FC } from "react";
+import { FC, memo } from "react";
 
 interface ActionMenuProps {
   onAdd: () => void;
@@ -22,4 +22,4 @@ const ActionMenu: FC<ActionMenuProps> = ({ onAdd, onRename, onDelete }) => (
   </div>
 );
 
-export default ActionMenu;
+export default memo(ActionMenu);
